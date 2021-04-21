@@ -6,7 +6,7 @@ This step will also involve creating a histogram (like with ideal gas) to track 
 
 The second step is to increase the traits in the herbivores. At the moment I'm thinking speed, where the herbivores can move faster at the cost of more energy per tile; sense, where the herbivores can detect food from further away; and the third step is an (currently) arbitrary color value that determines the color of the herbivore.
 
-The third step is to introduce a predator species that targets the herbivores instead of the food particles. They will also have the same traits as the herbivores. 
+The third step is to introduce a predator species that targets the herbivores instead of the food plants. They will also have the same traits as the herbivores. 
 
 
 I have a few reasons why I want to do this for my project. The first is that I've seen it done before on YouTube (not the code, only the result), although they didn't have predators and instead had a different third trait. The second is that I'm minoring in bioengineering and enjoy biology in general, so this will be both fun and applicable. The third is that I can reference old code to get parts of this working, which makes it easier for me.
