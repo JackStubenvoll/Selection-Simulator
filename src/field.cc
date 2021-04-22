@@ -33,7 +33,7 @@ void field::setup() {
 }
 
 /**
- * displays what's in the container. Draws box, then plants.
+ * displays what's in the selectionField. Draws box, then plants.
  * displays number of plants at the top.
  */
 void field::Display() const {

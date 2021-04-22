@@ -14,30 +14,28 @@ using std::vector;
  */
 class Histogram {
  public:
-  Histogram(const int imargin, const int windowSize, float particleMass, const field &icontainer, const int sectionNumber);
+  Histogram(const int imargin, const int windowSize, field &ifield, const int sectionNumber);
   Histogram();
-  void updateGraph(field &icontainer);
+  void updateGraph(field &ifield);
   void Display() const;
   void doMath();
   void displayBox() const;
   void displayText() const;
   void displayGraph() const;
   void displayNumbers() const;
-  std::map<int, int> speedMap; //key is speed, value is number of plants
+  std::vector<float> averages;
+    size_t dayCounter = 0;
  private:
+    
   int margin;
   int leftBound;
   int topBound;
   int rightBound;
   int bottomBound;
-  field container;
-  float massFilter;
+  field *selectionField;
   int avgVelocity;
-  int numFilteredParticles;
-  vector<Plant> filteredParticles;
+  size_t numAnimals;
   int maxHeight = -1;
-  int minimumVelocity;
-  int maximumVelocity;
 
 };
 

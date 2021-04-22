@@ -16,20 +16,20 @@ naturalSelectionApp::naturalSelectionApp() {
 }
 
 /**
- * setup, sets running to false by default. Adds plants to container.
+ * setup, sets running to false by default. Adds plants to selectionField.
  */
 void naturalSelectionApp::setup() {
   srand((unsigned int)time(NULL));
   running = true;
   byFrame = true;
   field_.setup();
-  //topRight = Histogram(margin, windowSize, smallMass, field_, topRightSectionNum);
+  topRight = Histogram(margin, windowSize, field_, 2);
   //bottomLeft = Histogram(margin, windowSize, mediumMass, field_, bottomLeftSectionNum);
   //bottomRight = Histogram(margin, windowSize, largeMass, field_, bottomRightSectionNum);
 }
 
 /**
- * draw first draws background, then calls the container's display function.
+ * draw first draws background, then calls the selectionField's display function.
  */
 void naturalSelectionApp::draw() {
   ci::Color background_color("black");
@@ -44,7 +44,7 @@ void naturalSelectionApp::draw() {
   }
   ci::gl::drawSolidRect(byFrameIndicator);
   field_.Display();
-  //topRight.Display();
+  topRight.Display();
   //bottomLeft.Display();
   //bottomRight.Display();
 }
@@ -60,6 +60,8 @@ void naturalSelectionApp::update() {
           framesPassed++;
       } else {
           field_.advanceDay();
+          topRight.dayCounter++;
+          topRight.updateGraph(field_);
           if (framesPassed == 0) {
               byFrame = !byFrame;
           }
@@ -70,7 +72,7 @@ void naturalSelectionApp::update() {
       framesPassed = 0;
       byFrame = !byFrame;
   }
-  //topRight.updateGraph(field_);
+  
   //bottomLeft.updateGraph(field_);
   //bottomRight.updateGraph(field_);
 
@@ -101,10 +103,11 @@ void naturalSelectionApp::keyDown(ci::app::KeyEvent event) {
               }
           } else {
               field_.advanceDay();
+              topRight.dayCounter++;
               byFrame = !byFrame;
           }
           
-        //topRight.updateGraph(field_);
+        topRight.updateGraph(field_);
         //bottomLeft.updateGraph(field_);
         //bottomRight.updateGraph(field_);
       }

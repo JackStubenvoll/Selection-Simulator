@@ -24,9 +24,9 @@ namespace naturalSelection {
         if (dx == 0 && dy == 0) {
             return true;
         }
-//        if (energyLevel <= 0) {
-//            std::cout << "Procced" << std::endl;
-//        }
+        if (energyLevel <= 0) {
+            std::cout << "Procced" << std::endl;
+        }
         float temp = speed;
         while (temp > 0 && energyLevel > 0)  {
             if (position == newPosition) {
@@ -45,7 +45,7 @@ namespace naturalSelection {
                     position.y--;
                 }
             }
-            energyLevel = energyLevel - ((speed + 1) / 2);
+            energyLevel = energyLevel - speed;
             temp= temp - 1;
         }
         return false;
@@ -60,7 +60,7 @@ namespace naturalSelection {
     }
     
     Animal* Animal::reproduce() {
-        float speedOffset = (float) (rand() % 101 - 50) / 100;
+        float speedOffset = (float) (rand() % 101 - 50) / 1000;
         float newSpeed = speed + speedOffset;
         float gOffset = (float) (rand() % 11 - 5) / 100;
         ci::Color newColor(color.r, color.g + gOffset, color.b);

@@ -52,7 +52,8 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 list(APPEND SOURCE_FILES src/field.cc
         src/natural_selection_app.cc
         src/plant.cpp
-        src/animal.cpp)
+        src/animal.cpp
+        src/histogram.cpp)
 
 list(APPEND TEST_FILES tests/OrganismTesting.cc
         )
