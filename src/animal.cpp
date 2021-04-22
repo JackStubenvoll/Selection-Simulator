@@ -6,24 +6,32 @@
 
 namespace naturalSelection {
     
-    Animal::Animal(const vec2 &iposition, const size_t &ispeed, const ci::Color &icolor) {
+    Animal::Animal(const vec2 &iposition, const float &ispeed, const ci::Color &icolor) {
         position = iposition;
         speed = ispeed;
         color = icolor;
         energyLevel = energyToLive;
     }
     
+    
     void Animal::eatFood() {
         energyLevel += energyToLive;
     }
     
     bool Animal::moveTo(vec2 newPosition) {
-        int dx = (newPosition.x - position.x);
-        int dy = (newPosition.y - position.y);
+        float dx = (newPosition.x - position.x);
+        float dy = (newPosition.y - position.y);
         if (dx == 0 && dy == 0) {
             return true;
         }
-        for (size_t t = 0; t < speed; t++) {
+//        if (energyLevel <= 0) {
+//            std::cout << "Procced" << std::endl;
+//        }
+        float temp = speed;
+        while (temp > 0 && energyLevel > 0)  {
+            if (position == newPosition) {
+                return true;
+            }
             if (std::abs(dx) >= std::abs(dy)) {
                 if (dx > 0) {
                     position.x++;
@@ -37,7 +45,8 @@ namespace naturalSelection {
                     position.y--;
                 }
             }
-            energyLevel = energyLevel - (((float) speed + 1) / 2);
+            energyLevel = energyLevel - ((speed + 1) / 2);
+            temp= temp - 1;
         }
         return false;
     }
@@ -48,6 +57,17 @@ namespace naturalSelection {
     
     bool Animal::canReproduce() {
         return energyLevel >= energyToReproduce;
+    }
+    
+    Animal* Animal::reproduce() {
+        float speedOffset = (float) (rand() % 101 - 50) / 100;
+        float newSpeed = speed + speedOffset;
+        float gOffset = (float) (rand() % 11 - 5) / 100;
+        ci::Color newColor(color.r, color.g + gOffset, color.b);
+        vec2 newPosition(rand() % 100, rand() % 100);
+        Animal *child = new Animal(newPosition, newSpeed, newColor);
+        return child;
+        
     }
     
 }

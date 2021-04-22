@@ -28,6 +28,8 @@ class naturalSelectionApp : public ci::app::App {
   bool running;
   bool byFrame;
   field field_;
+  const size_t numFramesPerDay = 300;
+  size_t framesPassed = 0;
   //Histogram topRight;
   //Histogram bottomLeft;
   //Histogram bottomRight;

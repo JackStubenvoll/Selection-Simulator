@@ -57,9 +57,18 @@ void naturalSelectionApp::update() {
   if (running) {
       if (byFrame) {
           field_.advanceOneFrame();
+          framesPassed++;
       } else {
           field_.advanceDay();
+          if (framesPassed == 0) {
+              byFrame = !byFrame;
+          }
       }
+  }
+  
+  if (framesPassed >= numFramesPerDay) {
+      framesPassed = 0;
+      byFrame = !byFrame;
   }
   //topRight.updateGraph(field_);
   //bottomLeft.updateGraph(field_);
@@ -85,8 +94,14 @@ void naturalSelectionApp::keyDown(ci::app::KeyEvent event) {
       if (!running) {
           if (byFrame) {
               field_.advanceOneFrame();
+              framesPassed++;
+              if (framesPassed >= numFramesPerDay) {
+                  framesPassed = 0;
+                  byFrame = !byFrame;
+              }
           } else {
               field_.advanceDay();
+              byFrame = !byFrame;
           }
           
         //topRight.updateGraph(field_);

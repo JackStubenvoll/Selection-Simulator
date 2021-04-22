@@ -28,12 +28,16 @@ class field {
   void advanceDay();
 
   void generatePlant();
+  void generateAnimal();
   void updateAnimalPosition(Animal &animal);
   void updateAnimalPopulation();
   void setup();
+  float distance(vec2 position1, vec2 position2);
  private:
   void displayPlant(Plant plant) const;
+  void displayAnimal(Animal animal) const;
   size_t numPlantsEachDay; 
+  size_t startAnimals = 2;
   size_t pixelsPerSide;
   int xlowbound;
   int xhighbound;

@@ -11,18 +11,18 @@ using glm::vec2;
 namespace naturalSelection {
     class Animal {
     public:
-        Animal(const vec2 &iposition, const size_t &ispeed, const ci::Color &icolor);
+        Animal(const vec2 &iposition, const float &ispeed, const ci::Color &icolor);
         vec2 position;
-        size_t speed;
+        float speed;
         ci::Color color;
         void eatFood();
         bool moveTo(vec2 newPosition);
         bool canLive();
         bool canReproduce();
-        Animal reproduce();
+        Animal* reproduce();
     private:
-        size_t energyLevel;
-        const size_t energyToLive = 20;
-        const size_t energyToReproduce = 40;
+        float energyLevel;
+        const float energyToLive = 20;
+        const float energyToReproduce = 40;
     };
 }
