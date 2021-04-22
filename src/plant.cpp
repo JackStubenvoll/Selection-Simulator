@@ -9,4 +9,8 @@ Plant::Plant(const vec2 &iposition, const ci::Color &icolor) {
   position = iposition;
   color = icolor;
 }
+
+bool Plant::isEqual(Plant other) {
+    return (this->position == other.position) && this->color == other.color; 
+}
 }

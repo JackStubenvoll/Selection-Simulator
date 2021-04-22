@@ -11,19 +11,21 @@ using glm::vec2;
  * constructor for app
  */
 naturalSelectionApp::naturalSelectionApp() {
-  container_ = field(margin, sectionSize, 100, 100);
+        field_ = field(margin, sectionSize, 100, 100);
   ci::app::setWindowSize(windowSize, windowSize);
 }
 
 /**
- * setup, sets playing to false by default. Adds plants to container.
+ * setup, sets running to false by default. Adds plants to container.
  */
 void naturalSelectionApp::setup() {
   srand((unsigned int)time(NULL));
-  playing = false;
-  //topRight = Histogram(margin, windowSize, smallMass, container_, topRightSectionNum);
-  //bottomLeft = Histogram(margin, windowSize, mediumMass, container_, bottomLeftSectionNum);
-  //bottomRight = Histogram(margin, windowSize, largeMass, container_, bottomRightSectionNum);
+  running = true;
+  byFrame = true;
+  field_.setup();
+  //topRight = Histogram(margin, windowSize, smallMass, field_, topRightSectionNum);
+  //bottomLeft = Histogram(margin, windowSize, mediumMass, field_, bottomLeftSectionNum);
+  //bottomRight = Histogram(margin, windowSize, largeMass, field_, bottomRightSectionNum);
 }
 
 /**
@@ -32,27 +34,36 @@ void naturalSelectionApp::setup() {
 void naturalSelectionApp::draw() {
   ci::Color background_color("black");
   ci::gl::clear(background_color);
-  ci::gl::color(ci::Color("green"));
   ci::gl::drawLine(vec2(windowSize / 2, 0), vec2(windowSize  / 2, windowSize));
   ci::gl::drawLine(vec2(0, windowSize / 2), vec2(windowSize, windowSize / 2));
-
-  container_.Display();
+  ci::Rectf byFrameIndicator(vec2(0, 0), vec2(10, 10));
+  if (byFrame) {
+      ci::gl::color(ci::Color("red"));
+  } else {
+      ci::gl::color(ci::Color("blue"));
+  }
+  ci::gl::drawSolidRect(byFrameIndicator);
+  field_.Display();
   //topRight.Display();
   //bottomLeft.Display();
   //bottomRight.Display();
 }
 
 /**
- * only updates the canvas if simulation is in the playing state.
+ * only updates the canvas if simulation is in the running state.
  */
 void naturalSelectionApp::update() {
   srand((unsigned int)time(NULL));
-  if (playing) {
-      container_.advanceOneFrame();
+  if (running) {
+      if (byFrame) {
+          field_.advanceOneFrame();
+      } else {
+          field_.advanceDay();
+      }
   }
-  topRight.updateGraph(container_);
-  bottomLeft.updateGraph(container_);
-  bottomRight.updateGraph(container_);
+  //topRight.updateGraph(field_);
+  //bottomLeft.updateGraph(field_);
+  //bottomRight.updateGraph(field_);
 
 
 }
@@ -65,22 +76,26 @@ void naturalSelectionApp::update() {
  * @param event
  */
 void naturalSelectionApp::keyDown(ci::app::KeyEvent event) {
-  switch (event.getCode()) {
+    switch (event.getCode()) {
     case ci::app::KeyEvent::KEY_SPACE:
       //update state to pause the function
-      if (playing) {
-        playing = false;
-      } else {
-        playing = true;
-      }
+      running = !running;
       break;
     case ci::app::KeyEvent::KEY_TAB:
-      if (!playing) {
-          container_.advanceOneFrame();
-        topRight.updateGraph(container_);
-        bottomLeft.updateGraph(container_);
-        bottomRight.updateGraph(container_);
+      if (!running) {
+          if (byFrame) {
+              field_.advanceOneFrame();
+          } else {
+              field_.advanceDay();
+          }
+          
+        //topRight.updateGraph(field_);
+        //bottomLeft.updateGraph(field_);
+        //bottomRight.updateGraph(field_);
       }
+      break;
+    case ci::app::KeyEvent::KEY_KP0:
+      byFrame = !byFrame;
       break;
   }
 

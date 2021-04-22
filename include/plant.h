@@ -13,7 +13,7 @@ class Plant {
    Plant(const vec2 &iposition, const ci::Color &icolor);
    vec2 position;
    ci::Color color;
-
+   bool isEqual(Plant other);
 
 };
 }

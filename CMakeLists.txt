@@ -52,20 +52,21 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 list(APPEND SOURCE_FILES src/field.cc
         src/natural_selection_app.cc
         src/plant.cpp
+        src/animal.cpp
                             src/histogram.cpp)
 
-list(APPEND TEST_FILES tests/container_tests.cc
-        tests/histogram_tests.cc)
+list(APPEND TEST_FILES tests/OrganismTesting.cc
+        )
 
 ci_make_app(
-        APP_NAME        gas-simulation
+        APP_NAME        naturalSelectionSimulation
         CINDER_PATH     ${CINDER_PATH}
         SOURCES         apps/cinder_app_main.cc ${SOURCE_FILES}
         INCLUDES        include
 )
 
 ci_make_app(
-        APP_NAME        gas-simulation-test
+        APP_NAME        OrganismTests
         CINDER_PATH     ${CINDER_PATH}
         SOURCES         tests/test_main.cc ${SOURCE_FILES} ${TEST_FILES}
         INCLUDES        include
@@ -73,5 +74,5 @@ ci_make_app(
 )
 
 if(MSVC)
-    set_property(TARGET gas-simulation-test APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
+    set_property(TARGET OrganismTests APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
 endif()

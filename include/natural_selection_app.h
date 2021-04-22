@@ -25,18 +25,19 @@ class naturalSelectionApp : public ci::app::App {
   const int sectionSize = (windowSize) / 2;
 
  private:
-  bool playing;
-  field container_;
-  Histogram topRight;
-  Histogram bottomLeft;
-  Histogram bottomRight;
-  const int topRightSectionNum = 2;
-  const int bottomLeftSectionNum = 3;
-  const int bottomRightSectionNum = 4;
-  const float smallMass = 1;
-  const float mediumMass = 10;
-  const float largeMass = 100;
-  const int numParticles = 25;
+  bool running;
+  bool byFrame;
+  field field_;
+  //Histogram topRight;
+  //Histogram bottomLeft;
+  //Histogram bottomRight;
+  //const int topRightSectionNum = 2;
+  //const int bottomLeftSectionNum = 3;
+  //const int bottomRightSectionNum = 4;
+  //const float smallMass = 1;
+  //const float mediumMass = 10;
+  //const float largeMass = 100;
+  //const int numParticles = 25;
   void keyDown(ci::app::KeyEvent event);
   
 };

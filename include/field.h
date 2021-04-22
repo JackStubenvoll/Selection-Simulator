@@ -14,7 +14,7 @@ namespace naturalSelection {
 class field {
  public:
   field(const int margin, const int containerSize, const size_t numPlants, const size_t numPixels);
-  field();
+  field() = default;
 
   /**
    * Displays the border of the field and the current positions of plants and animals.
@@ -28,7 +28,9 @@ class field {
   void advanceDay();
 
   void generatePlant();
-  void updateAnimalPositions(Plant &particle);
+  void updateAnimalPosition(Animal &animal);
+  void updateAnimalPopulation();
+  void setup();
  private:
   void displayPlant(Plant plant) const;
   size_t numPlantsEachDay; 
@@ -38,9 +40,8 @@ class field {
   int ylowbound;
   int yhighbound;
   size_t pixelsPerPixel;
-  size_t numOfPlants;
-  size_t numOfAnimals;
   std::vector<Plant> plants;
+  std::vector<Animal> animals;
 };
 
 }  // namespace naturalSelection
