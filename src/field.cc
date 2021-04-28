@@ -100,9 +100,10 @@ void field::generatePlant() {
 
 void field::generateAnimal() {
     vec2 animalCoords(rand() % 100, rand() % 100);
-    float speed = 1;
+    double speed = 1;
+    double intelligence = 4;
     ci::Color startAnimalColor(0.25, 0, 0.5);
-    Animal animal(animalCoords, speed, startAnimalColor);
+    Animal animal(animalCoords, speed, intelligence, startAnimalColor);
     animals.push_back(animal);
 }
 
@@ -131,9 +132,9 @@ void field::updateAnimalPosition(Animal &animal) {
   if (plants.size() == 0) {
       return;
   }
-  float shortestDistance = distance(animal.position, plants[0].position);
+  double shortestDistance = distance(animal.position, plants[0].position);
   for (size_t t = 1; t < plants.size(); t++) {
-      float thisDistance = distance(animal.position, plants[t].position); 
+      double thisDistance = distance(animal.position, plants[t].position); 
       if (thisDistance < shortestDistance) {
           shortestDistance = thisDistance;
           closestPlantIndex = t;
@@ -147,9 +148,9 @@ void field::updateAnimalPosition(Animal &animal) {
   
 }
     
-float field::distance(vec2 position1, vec2 position2) {
-    float xdistance = std::abs(position1.x - position2.x);
-    float ydistance = std::abs(position1.y - position2.y);
+double field::distance(vec2 position1, vec2 position2) {
+    double xdistance = std::abs(position1.x - position2.x);
+    double ydistance = std::abs(position1.y - position2.y);
     return xdistance + ydistance;
 }
 

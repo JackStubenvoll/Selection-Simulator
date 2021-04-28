@@ -6,9 +6,10 @@
 
 namespace naturalSelection {
     
-    Animal::Animal(const vec2 &iposition, const float &ispeed, const ci::Color &icolor) {
+    Animal::Animal(const vec2 &iposition, const double &ispeed, const double &iintelligence, const ci::Color &icolor) {
         position = iposition;
         speed = ispeed;
+        intelligence = iintelligence;
         color = icolor;
         energyLevel = energyToLive;
     }
@@ -24,13 +25,27 @@ namespace naturalSelection {
         if (dx == 0 && dy == 0) {
             return true;
         }
-        if (energyLevel <= 0) {
-            std::cout << "Procced" << std::endl;
+        if (dx + dy > energyLevel) {
+            double moveProbability = rand() % 10 + 1;
+            if (moveProbability > intelligence) {
+                return false;
+            }
         }
-        float temp = speed;
-        while (temp > 0 && energyLevel > 0)  {
+        if (speed == 0) {
+            energyLevel--;
+        }
+        double tileMoveCounter = speed;
+        while (tileMoveCounter > 0 && energyLevel > 0)  {
+            dx = (newPosition.x - position.x);
+            dy = (newPosition.y - position.y);
             if (position == newPosition) {
                 return true;
+            }
+            if (dx + dy > energyLevel) {
+                double moveProbability = rand() % 10 + 1;
+                if (moveProbability > intelligence) {
+                    return false;
+                }
             }
             if (std::abs(dx) >= std::abs(dy)) {
                 if (dx > 0) {
@@ -45,8 +60,8 @@ namespace naturalSelection {
                     position.y--;
                 }
             }
-            energyLevel = energyLevel - speed;
-            temp= temp - 1;
+            energyLevel = energyLevel - (1 + speed/20.0);
+            tileMoveCounter= tileMoveCounter - 1;
         }
         return false;
     }
@@ -60,12 +75,23 @@ namespace naturalSelection {
     }
     
     Animal* Animal::reproduce() {
-        float speedOffset = (float) (rand() % 101 - 50) / 1000;
-        float newSpeed = speed + speedOffset;
-        float gOffset = (float) (rand() % 11 - 5) / 100;
+        int speedOffsetProb = rand() % 10;
+        double speedOffset = 0;
+        switch (speedOffsetProb) {
+            case 0:
+                speedOffset = -1;
+                break;
+            case 9:
+                speedOffset = 1;
+                break;
+        }
+        double newSpeed = speed + speedOffset;
+        double intOffset = (rand() % 101 - 50) / 100.0;
+        double newInt = intelligence + intOffset;
+        float gOffset = (rand() % 11 - 5) / 100.f;
         ci::Color newColor(color.r, color.g + gOffset, color.b);
         vec2 newPosition(rand() % 100, rand() % 100);
-        Animal *child = new Animal(newPosition, newSpeed, newColor);
+        Animal *child = new Animal(newPosition, newSpeed, newInt, newColor);
         return child;
         
     }

@@ -32,7 +32,7 @@ class field {
   void updateAnimalPosition(Animal &animal);
   void updateAnimalPopulation();
   void setup();
-  float distance(vec2 position1, vec2 position2);
+  double distance(vec2 position1, vec2 position2);
   std::vector<Plant> plants;
   std::vector<Animal> animals;
  private:

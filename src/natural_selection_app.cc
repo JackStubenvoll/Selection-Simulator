@@ -23,9 +23,9 @@ void naturalSelectionApp::setup() {
   running = true;
   byFrame = true;
   field_.setup();
-  topRight = Histogram(margin, windowSize, field_, 2);
-  //bottomLeft = Histogram(margin, windowSize, mediumMass, field_, bottomLeftSectionNum);
-  //bottomRight = Histogram(margin, windowSize, largeMass, field_, bottomRightSectionNum);
+  speed = Histogram(margin, windowSize, 2, "Speed");
+  population = Histogram(margin, windowSize, 3, "Population");
+  intelligence = Histogram(margin, windowSize, 4, "Intelligence");
 }
 
 /**
@@ -44,9 +44,9 @@ void naturalSelectionApp::draw() {
   }
   ci::gl::drawSolidRect(byFrameIndicator);
   field_.Display();
-  topRight.Display();
-  //bottomLeft.Display();
-  //bottomRight.Display();
+  speed.Display();
+  population.Display();
+  intelligence.Display();
 }
 
 /**
@@ -59,9 +59,8 @@ void naturalSelectionApp::update() {
           field_.advanceOneFrame();
           framesPassed++;
       } else {
+          updateHistograms();
           field_.advanceDay();
-          topRight.dayCounter++;
-          topRight.updateGraph(field_);
           if (framesPassed == 0) {
               byFrame = !byFrame;
           }
@@ -73,8 +72,8 @@ void naturalSelectionApp::update() {
       byFrame = !byFrame;
   }
   
-  //bottomLeft.updateGraph(field_);
-  //bottomRight.updateGraph(field_);
+  //population.updateGraph(field_);
+  //intelligence.updateGraph(field_);
 
 
 }
@@ -103,13 +102,10 @@ void naturalSelectionApp::keyDown(ci::app::KeyEvent event) {
               }
           } else {
               field_.advanceDay();
-              topRight.dayCounter++;
               byFrame = !byFrame;
           }
           
-        topRight.updateGraph(field_);
-        //bottomLeft.updateGraph(field_);
-        //bottomRight.updateGraph(field_);
+        updateHistograms();
       }
       break;
     case ci::app::KeyEvent::KEY_KP0:
@@ -119,5 +115,41 @@ void naturalSelectionApp::keyDown(ci::app::KeyEvent event) {
 
 }
 
+void naturalSelectionApp::updateHistograms() {
+    population.updateGraph((float) field_.animals.size());
+    speed.updateGraph(animalValueAverage(field_.animals, 1));
+    intelligence.updateGraph(animalValueAverage(field_.animals, 2));
+    
+    population.dayCounter++;
+    speed.dayCounter++;
+    intelligence.dayCounter++;
+}
 
+    
+double naturalSelectionApp::animalValueAverage(vector<Animal> animals, size_t valueType) {
+    double sum = 0;  
+    switch (valueType) {
+        case 1:
+            //wants speed
+            for (size_t t = 0; t < animals.size(); t++) {
+                sum += animals[t].speed;
+            }
+            break;
+        case 2:
+            //wants intelligence
+            for (size_t t = 0; t < animals.size(); t++) {
+                sum += animals[t].intelligence;
+            }
+            break;
+        case 3:
+            //wants sense
+            for (size_t t = 0; t < animals.size(); t++) {
+                //sum += animals[t].sense;
+            }
+            break;
+    }
+    return sum / ((double) animals.size());
+}
+    
+    
 }  // namespace naturalSelection

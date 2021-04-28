@@ -14,16 +14,15 @@ using std::vector;
  */
 class Histogram {
  public:
-  Histogram(const int imargin, const int windowSize, field &ifield, const int sectionNumber);
+  Histogram(const int imargin, const int windowSize, const int sectionNumber, std::string dataType);
   Histogram();
-  void updateGraph(field &ifield);
+  void updateGraph(double datapoint);
   void Display() const;
-  void doMath();
   void displayBox() const;
   void displayText() const;
   void displayGraph() const;
   void displayNumbers() const;
-  std::vector<float> averages;
+  std::vector<double> datapoints;
     size_t dayCounter = 0;
  private:
     
@@ -32,10 +31,8 @@ class Histogram {
   int topBound;
   int rightBound;
   int bottomBound;
-  field *selectionField;
-  int avgVelocity;
-  size_t numAnimals;
-  int maxHeight = -1;
+  size_t numDatapoints = 0;
+  std::string nameOfData;
 
 };
 

@@ -30,9 +30,9 @@ class naturalSelectionApp : public ci::app::App {
   field field_;
   const size_t numFramesPerDay = 300;
   size_t framesPassed = 0;
-  Histogram topRight;
-  //Histogram bottomLeft;
-  //Histogram bottomRight;
+  Histogram speed;
+  Histogram population;
+  Histogram intelligence;
   //const int topRightSectionNum = 2;
   //const int bottomLeftSectionNum = 3;
   //const int bottomRightSectionNum = 4;
@@ -41,6 +41,8 @@ class naturalSelectionApp : public ci::app::App {
   //const float largeMass = 100;
   //const int numParticles = 25;
   void keyDown(ci::app::KeyEvent event);
+  void updateHistograms();
+  double animalValueAverage(vector<Animal> animals, size_t valueType);
   
 };
 
