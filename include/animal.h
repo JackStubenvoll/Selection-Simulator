@@ -11,10 +11,11 @@ using glm::vec2;
 namespace naturalSelection {
     class Animal {
     public:
-        Animal(const vec2 &iposition, const double &ispeed, const double &iintelligence, const ci::Color &icolor);
+        Animal(const vec2 &iposition, const double &ispeed, const double &iintelligence, const bool predator, const ci::Color &icolor);
         vec2 position;
         double speed;
         double intelligence;
+        bool isPredator = false;
         ci::Color color;
         void eatFood();
         bool moveTo(vec2 newPosition);
@@ -23,7 +24,7 @@ namespace naturalSelection {
         Animal* reproduce();
     private:
         double energyLevel;
-        const double energyToLive = 20;
-        const double energyToReproduce = 40;
+        double energyToLive = 20;
+        double energyToReproduce = 40;
     };
 }

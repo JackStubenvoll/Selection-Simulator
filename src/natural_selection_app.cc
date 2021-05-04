@@ -11,7 +11,7 @@ using glm::vec2;
  * constructor for app
  */
 naturalSelectionApp::naturalSelectionApp() {
-        field_ = field(margin, sectionSize, 100, 100);
+        field_ = field(margin, sectionSize, 200, 100);
   ci::app::setWindowSize(windowSize, windowSize);
 }
 
@@ -102,10 +102,11 @@ void naturalSelectionApp::keyDown(ci::app::KeyEvent event) {
               }
           } else {
               field_.advanceDay();
+              updateHistograms();
               byFrame = !byFrame;
           }
           
-        updateHistograms();
+        
       }
       break;
     case ci::app::KeyEvent::KEY_KP0:
@@ -116,9 +117,9 @@ void naturalSelectionApp::keyDown(ci::app::KeyEvent event) {
 }
 
 void naturalSelectionApp::updateHistograms() {
-    population.updateGraph((float) field_.animals.size());
-    speed.updateGraph(animalValueAverage(field_.animals, 1));
-    intelligence.updateGraph(animalValueAverage(field_.animals, 2));
+    population.updateGraph((float) field_.herbivores.size());
+    speed.updateGraph(animalValueAverage(field_.herbivores, 1));
+    intelligence.updateGraph(animalValueAverage(field_.herbivores, 2));
     
     population.dayCounter++;
     speed.dayCounter++;
@@ -144,7 +145,7 @@ double naturalSelectionApp::animalValueAverage(vector<Animal> animals, size_t va
         case 3:
             //wants sense
             for (size_t t = 0; t < animals.size(); t++) {
-                //sum += animals[t].sense;
+                //sum += herbivores[t].sense;
             }
             break;
     }

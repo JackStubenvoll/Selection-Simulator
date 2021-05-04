@@ -27,8 +27,9 @@ void field::setup() {
         generatePlant();    
     }
     for (size_t t = 0; t < startAnimals; t++) {
-        generateAnimal();
+        generateHerbivore();
     }
+    generatePredator();
     
 }
 
@@ -44,14 +45,19 @@ void field::Display() const {
   for (size_t t = 0; t < plants.size(); t++) {
     displayPlant(plants[t]);
   }
-  for (size_t t = 0; t < animals.size(); t++) {
-      displayAnimal(animals[t]);
+  for (size_t t = 0; t < herbivores.size(); t++) {
+      displayAnimal(herbivores[t]);
+  }
+  for (size_t t = 0; t < predators.size(); t++) {
+      displayAnimal(predators[t]);
   }
   std::string displayString = "Current number of plants: ";
   displayString+= std::to_string(plants.size()) + "\n";
-  displayString+= "Current number of herbivores: " + std::to_string(animals.size());
+  displayString+= "Current number of herbivores: " + std::to_string(herbivores.size());
+  displayString+= "\nCurrent number of predators: " + std::to_string(predators.size());
+  displayString+= "\n Day: " + std::to_string(dayNum);
   ci::gl::drawStringCentered(displayString,
-                             vec2((xlowbound + xhighbound)/2, ylowbound / 2),
+                             vec2((xlowbound + xhighbound)/2, 0),
                              ci::Color("white"),
                              ci::Font("Arial", 28));
 }
@@ -79,12 +85,16 @@ void field::displayAnimal(Animal animal) const {
  * Detects for collisions between plants by iterating over the list and then checking remaining plants
  */
 void field::advanceOneFrame() {
-  for (size_t i = 0; i < animals.size(); i++) {
-      updateAnimalPosition(animals[i]);
+  for (size_t i = 0; i < herbivores.size(); i++) {
+      updateHerbivorePosition(herbivores[i]);
+  }
+  for (size_t i = 0; i < predators.size(); i++) {
+      updatePredatorPosition(predators[i]);
   }
 }
 
 void field::advanceDay() {
+    dayNum++;
     plants.clear();
     for (size_t t = 0; t < numPlantsEachDay; t++) {
         generatePlant();
@@ -98,54 +108,106 @@ void field::generatePlant() {
     plants.push_back(plant);
 }
 
-void field::generateAnimal() {
+void field::generateHerbivore() {
     vec2 animalCoords(rand() % 100, rand() % 100);
     double speed = 1;
     double intelligence = 4;
     ci::Color startAnimalColor(0.25, 0, 0.5);
-    Animal animal(animalCoords, speed, intelligence, startAnimalColor);
-    animals.push_back(animal);
+    Animal animal(animalCoords, speed, intelligence, false, startAnimalColor);
+    herbivores.push_back(animal);
+}
+
+void field::generatePredator() {
+    vec2 animalCoords(rand() % 100, rand() % 100);
+    double speed = 2;
+    double intelligence = 4;
+    ci::Color startAnimalColor(0.75, 0, 0.5);
+    Animal animal(animalCoords, speed, intelligence, true, startAnimalColor);
+    predators.push_back(animal);
 }
 
 void field::updateAnimalPopulation() {
-    std::vector<Animal> updatedAnimalList;
-    for (size_t t = 0; t < animals.size(); t++) {
-        if (animals[t].canReproduce()) {
-            Animal *child1 = animals[t].reproduce();
-            Animal *child2 = animals[t].reproduce();
-            updatedAnimalList.push_back(*child1);
-            updatedAnimalList.push_back(*child2);
-            //std::cout << animals[t].reproduce()->speed << std::endl;
-        } else if (animals[t].canLive()) {
-            updatedAnimalList.push_back(animals[t]);
+    //update herbivores
+    std::vector<Animal> updatedHerbivoresList;
+    for (size_t t = 0; t < herbivores.size(); t++) {
+        if (herbivores[t].canReproduce()) {
+            Animal *child1 = herbivores[t].reproduce();
+            Animal *child2 = herbivores[t].reproduce();
+            updatedHerbivoresList.push_back(*child1);
+            updatedHerbivoresList.push_back(*child2);
+        } else if (herbivores[t].canLive()) {
+            updatedHerbivoresList.push_back(herbivores[t]);
         }
     }
-    animals.clear();
-    for (size_t t = 0; t < updatedAnimalList.size(); t++) {
-        animals.push_back(updatedAnimalList[t]);
+    herbivores.clear();
+    for (size_t t = 0; t < updatedHerbivoresList.size(); t++) {
+        herbivores.push_back(updatedHerbivoresList[t]);
+    }
+    //update predators
+    std::vector<Animal> updatedPredatorsList;
+    for (size_t t = 0; t < predators.size(); t++) {
+        if (predators[t].canReproduce()) {
+            Animal *child1 = predators[t].reproduce();
+            Animal *child2 = predators[t].reproduce();
+            updatedPredatorsList.push_back(*child1);
+            updatedPredatorsList.push_back(*child2);
+        } else if (predators[t].canLive()) {
+            updatedPredatorsList.push_back(predators[t]);
+        }
+    }
+    predators.clear();
+    for (size_t t = 0; t < updatedHerbivoresList.size(); t++) {
+        predators.push_back(updatedHerbivoresList[t]);
     }
     
+    if (herbivores.size() == 0) {
+        generateHerbivore();
+        generateHerbivore();
+    }
+    if (predators.size() == 0) {
+        generatePredator();
+    }
 }
 
-void field::updateAnimalPosition(Animal &animal) {
+void field::updateHerbivorePosition(Animal &herbivore) {
   size_t closestPlantIndex = 0;
   if (plants.size() == 0) {
       return;
   }
-  double shortestDistance = distance(animal.position, plants[0].position);
+  double shortestDistance = distance(herbivore.position, plants[0].position);
   for (size_t t = 1; t < plants.size(); t++) {
-      double thisDistance = distance(animal.position, plants[t].position); 
+      double thisDistance = distance(herbivore.position, plants[t].position); 
       if (thisDistance < shortestDistance) {
           shortestDistance = thisDistance;
           closestPlantIndex = t;
       }
   }
   //closest plant has been found
-  if (animal.moveTo(plants[closestPlantIndex].position)) {
-      animal.eatFood();
+  if (herbivore.moveTo(plants[closestPlantIndex].position)) {
+      herbivore.eatFood();
       plants.erase(plants.begin() + closestPlantIndex);
   }
   
+}
+
+void field::updatePredatorPosition(Animal &predator) {
+    size_t closestHerbivoreIndex = 0;
+    if (herbivores.size() == 0) {
+        return;
+    }
+    double shortestDistance = distance(predator.position, herbivores[0].position);
+    for (size_t t = 1; t < herbivores.size(); t++) {
+        double thisDistance = distance(predator.position, herbivores[t].position);
+        if (thisDistance < shortestDistance) {
+            shortestDistance = thisDistance;
+            closestHerbivoreIndex = t;
+        }
+    }
+    //closest herbivore has been found
+    if (predator.moveTo(herbivores[closestHerbivoreIndex].position)) {
+        predator.eatFood();
+        herbivores.erase(herbivores.begin() + closestHerbivoreIndex);
+    }
 }
     
 double field::distance(vec2 position1, vec2 position2) {

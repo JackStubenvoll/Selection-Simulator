@@ -31,6 +31,11 @@ class Histogram {
   int topBound;
   int rightBound;
   int bottomBound;
+  double min = 0;
+  double max = 0;
+  int pixelsScalar = 0;
+  int pixelsPerJump = 0;
+  double valuePerJump = 0;
   size_t numDatapoints = 0;
   std::string nameOfData;
 

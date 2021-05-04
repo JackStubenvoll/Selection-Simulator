@@ -9,7 +9,7 @@ using glm::vec2;
 namespace naturalSelection {
 
 /**
- * The selectionField in which all animals and plants exist.
+ * The selectionField in which all herbivores and plants exist.
  */
 class field {
  public:
@@ -17,30 +17,34 @@ class field {
   field() = default;
 
   /**
-   * Displays the border of the selectionField and the current positions of plants and animals.
+   * Displays the border of the selectionField and the current positions of plants and herbivores.
    */
   void Display() const;
 
   /**
-   * Updates the positions of all animals.
+   * Updates the positions of all herbivores.
    */
   void advanceOneFrame();
   void advanceDay();
 
   void generatePlant();
-  void generateAnimal();
-  void updateAnimalPosition(Animal &animal);
+  void generateHerbivore();
+  void generatePredator();
+  void updateHerbivorePosition(Animal &herbivore);
+  void updatePredatorPosition(Animal &predator);
   void updateAnimalPopulation();
   void setup();
   double distance(vec2 position1, vec2 position2);
   std::vector<Plant> plants;
-  std::vector<Animal> animals;
+  std::vector<Animal> herbivores;
+  std::vector<Animal> predators;
  private:
   void displayPlant(Plant plant) const;
   void displayAnimal(Animal animal) const;
   size_t numPlantsEachDay; 
-  size_t startAnimals = 2;
+  size_t startAnimals = 5;
   size_t pixelsPerSide;
+  size_t dayNum = 0;
   int xlowbound;
   int xhighbound;
   int ylowbound;

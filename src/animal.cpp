@@ -6,26 +6,31 @@
 
 namespace naturalSelection {
     
-    Animal::Animal(const vec2 &iposition, const double &ispeed, const double &iintelligence, const ci::Color &icolor) {
+    Animal::Animal(const vec2 &iposition, const double &ispeed, const double &iintelligence, const bool predator, const ci::Color &icolor) {
         position = iposition;
         speed = ispeed;
         intelligence = iintelligence;
+        isPredator = predator;
         color = icolor;
         energyLevel = energyToLive;
     }
     
     
     void Animal::eatFood() {
+        if (isPredator) {
+            energyLevel += energyToLive;
+        } 
         energyLevel += energyToLive;
     }
     
     bool Animal::moveTo(vec2 newPosition) {
+        srand((unsigned int)time(NULL));
         float dx = (newPosition.x - position.x);
         float dy = (newPosition.y - position.y);
         if (dx == 0 && dy == 0) {
             return true;
         }
-        if (dx + dy > energyLevel) {
+        if ((dx + dy) * (1 + speed/20.0)  > energyLevel) {
             double moveProbability = rand() % 10 + 1;
             if (moveProbability > intelligence) {
                 return false;
@@ -41,9 +46,9 @@ namespace naturalSelection {
             if (position == newPosition) {
                 return true;
             }
-            if (dx + dy > energyLevel) {
+            if ((dx + dy) * (1 + speed/20.0) > energyLevel) {
                 double moveProbability = rand() % 10 + 1;
-                if (moveProbability > intelligence) {
+                if (moveProbability < intelligence) {
                     return false;
                 }
             }
@@ -91,7 +96,7 @@ namespace naturalSelection {
         float gOffset = (rand() % 11 - 5) / 100.f;
         ci::Color newColor(color.r, color.g + gOffset, color.b);
         vec2 newPosition(rand() % 100, rand() % 100);
-        Animal *child = new Animal(newPosition, newSpeed, newInt, newColor);
+        Animal *child = new Animal(newPosition, newSpeed, newInt, isPredator, newColor);
         return child;
         
     }

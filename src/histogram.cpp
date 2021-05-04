@@ -28,6 +28,7 @@ Histogram::Histogram(const int imargin, const int windowSize, const int sectionN
       bottomBound = windowSize - margin;
       break;
   }
+    pixelsPerJump = (bottomBound - topBound) / 10;
 
 }
 
@@ -36,11 +37,18 @@ Histogram::Histogram() {}
 void Histogram::updateGraph(double datapoint) {
   datapoints.push_back(datapoint);
   numDatapoints++;
+  if (datapoints.size() > 1) {
+      min = *std::min_element(datapoints.begin(), datapoints.begin() + datapoints.size());
+      max = *std::max_element(datapoints.begin(), datapoints.begin() + datapoints.size());
+      pixelsScalar = (int) ((float) (bottomBound - topBound) / (max - min));
+      double temp = max - min;
+      valuePerJump = temp / 10.0;
+    }
 }
 
 void Histogram::Display() const {
   displayBox();
-  if (numDatapoints != 0) {
+  if (numDatapoints > 1) {
     displayText();
     displayGraph();
     displayNumbers();
@@ -57,14 +65,6 @@ void Histogram::displayBox() const {
 void Histogram::displayGraph() const {
   ci::gl::color(ci::Color("white"));
   int sectionWidth = (rightBound - leftBound) / (dayCounter + 1);
-    double min = 0;
-    double max = 0;
-    int pixelsScalar = 250;
-  if (datapoints.size() > 1) {
-      min = *std::min_element(datapoints.begin(), datapoints.begin() + datapoints.size());
-      max = *std::max_element(datapoints.begin(), datapoints.begin() + datapoints.size());
-      pixelsScalar = (int) ((float) (bottomBound - topBound) / (max - min));
-  }
   
   for (size_t t = 0; t < dayCounter; t++) {
     int sectionLeft = t * sectionWidth + leftBound;
@@ -77,27 +77,13 @@ void Histogram::displayGraph() const {
 }
 
 void Histogram::displayNumbers() const {
-    double min = 0;
-    double max = 0;
-    int pixelsScalar = 250;
-    int pixelsPerJump = (bottomBound - topBound) / 10;
-    double temp = max - min;
-    double valPerJump = temp / 10.0; 
-    if (datapoints.size() > 1) {
-        min = *std::min_element(datapoints.begin(), datapoints.begin() + datapoints.size());
-        max = *std::max_element(datapoints.begin(), datapoints.begin() + datapoints.size());
-        pixelsScalar = (int) ((float) (bottomBound - topBound) / (max - min));
-        temp = max - min;
-        valPerJump = temp / 10.0;
-    }
   for (float i = 0; i <= 10; i++) {
-    ci::gl::drawStringCentered(std::to_string(min + valPerJump * i),
+    ci::gl::drawStringCentered(std::to_string(min + valuePerJump * i),
                                vec2(leftBound - margin / 2, bottomBound - i * pixelsPerJump),
                                ci::Color("white"),
                                ci::Font("Arial", 28));
   }
   int sectionWidth = (rightBound - leftBound) / (dayCounter + 1);
-  int test = (((rightBound - leftBound) / 10) / sectionWidth);
   for (size_t t = 0; t < dayCounter; t++) {
     int sectionLeft = t * sectionWidth + leftBound;
     int sectionRight = (t + 1) * sectionWidth + leftBound;
