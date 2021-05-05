@@ -92,6 +92,7 @@ void field::advanceOneFrame() {
   }
   for (size_t i = 0; i < predators.size(); i++) {
       updatePredatorPosition(predators[i]);
+      Animal a = predators[i];
       double temp = predators[i].energyLevel;
       if (predators[i].energyLevel <= 0) {
           predators.erase(predators.begin() + i);
@@ -212,11 +213,7 @@ void field::updateHerbivorePosition(Animal &herbivore) {
 void field::updatePredatorPosition(Animal &predator) {
     size_t closestHerbivoreIndex = 0;
     if (herbivores.size() <= predators.size()) {
-        
-        for (size_t t = 0; t < predators.size(); t++) {
-            predators[t].starve();
-        }
-        
+        predator.starve();
         return;
     }
     double shortestDistance = distance(predator.position, herbivores[0].position);

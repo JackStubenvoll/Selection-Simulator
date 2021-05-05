@@ -36,7 +36,7 @@ namespace naturalSelection {
     
     void Animal::starve() {
         if (energyLevel > 0) {
-            energyLevel--;
+            energyLevel-= 0.4;
         }
         
     }
