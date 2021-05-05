@@ -11,7 +11,7 @@ using glm::vec2;
  * constructor for app
  */
 naturalSelectionApp::naturalSelectionApp() {
-        field_ = field(margin, sectionSize, 200, 100);
+        field_ = field(margin, sectionSize, 100, 100, numFramesPerDay);
   ci::app::setWindowSize(windowSize, windowSize);
 }
 
@@ -23,9 +23,12 @@ void naturalSelectionApp::setup() {
   running = true;
   byFrame = true;
   field_.setup();
-  speed = Histogram(margin, windowSize, 2, "Speed");
-  population = Histogram(margin, windowSize, 3, "Population");
-  intelligence = Histogram(margin, windowSize, 4, "Intelligence");
+  herbivoreSpeed = Histogram(margin, windowSize, 2, "Herbivore Speed");
+  herbivorePopulation = Histogram(margin, windowSize, 3, "Herbivore Population");
+  herbivoreIntelligence = Histogram(margin, windowSize, 4, "Herbivore Intelligence");
+  predatorSpeed = Histogram(margin, windowSize, 2, "Predator Speed");
+  predatorPopulation = Histogram(margin, windowSize, 3, "Predator Population");
+  predatorIntelligence = Histogram(margin, windowSize, 4, "Predator Intelligence");
 }
 
 /**
@@ -44,9 +47,16 @@ void naturalSelectionApp::draw() {
   }
   ci::gl::drawSolidRect(byFrameIndicator);
   field_.Display();
-  speed.Display();
-  population.Display();
-  intelligence.Display();
+  if (showHerbivore) {
+      herbivoreSpeed.Display();
+      herbivorePopulation.Display();
+      herbivoreIntelligence.Display();
+  } else {
+      predatorSpeed.Display();
+      predatorPopulation.Display();
+      predatorIntelligence.Display();
+  }
+  
 }
 
 /**
@@ -72,8 +82,8 @@ void naturalSelectionApp::update() {
       byFrame = !byFrame;
   }
   
-  //population.updateGraph(field_);
-  //intelligence.updateGraph(field_);
+  //herbivorePopulation.updateGraph(field_);
+  //herbivoreIntelligence.updateGraph(field_);
 
 
 }
@@ -110,20 +120,27 @@ void naturalSelectionApp::keyDown(ci::app::KeyEvent event) {
       }
       break;
     case ci::app::KeyEvent::KEY_KP0:
-      byFrame = !byFrame;
+      showHerbivore = !showHerbivore;
       break;
   }
 
 }
 
 void naturalSelectionApp::updateHistograms() {
-    population.updateGraph((float) field_.herbivores.size());
-    speed.updateGraph(animalValueAverage(field_.herbivores, 1));
-    intelligence.updateGraph(animalValueAverage(field_.herbivores, 2));
+    herbivorePopulation.updateGraph((float) field_.herbivores.size());
+    herbivoreSpeed.updateGraph(animalValueAverage(field_.herbivores, 1));
+    herbivoreIntelligence.updateGraph(animalValueAverage(field_.herbivores, 2));
     
-    population.dayCounter++;
-    speed.dayCounter++;
-    intelligence.dayCounter++;
+    predatorPopulation.updateGraph((float) field_.predators.size());
+    predatorSpeed.updateGraph(animalValueAverage(field_.predators, 1));
+    predatorIntelligence.updateGraph(animalValueAverage(field_.predators, 2));
+    
+    herbivorePopulation.dayCounter++;
+    herbivoreSpeed.dayCounter++;
+    herbivoreIntelligence.dayCounter++;
+    predatorPopulation.dayCounter++;
+    predatorSpeed.dayCounter++;
+    predatorIntelligence.dayCounter++;
 }
 
     
@@ -131,13 +148,13 @@ double naturalSelectionApp::animalValueAverage(vector<Animal> animals, size_t va
     double sum = 0;  
     switch (valueType) {
         case 1:
-            //wants speed
+            //wants herbivoreSpeed
             for (size_t t = 0; t < animals.size(); t++) {
                 sum += animals[t].speed;
             }
             break;
         case 2:
-            //wants intelligence
+            //wants herbivoreIntelligence
             for (size_t t = 0; t < animals.size(); t++) {
                 sum += animals[t].intelligence;
             }

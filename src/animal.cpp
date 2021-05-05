@@ -15,21 +15,34 @@ namespace naturalSelection {
         energyLevel = energyToLive;
     }
     
+    Animal::Animal(const vec2 &iposition, const double &ispeed, const double &iintelligence, const bool predator,
+                   const ci::Color &icolor, double startEnergy) {
+        position = iposition;
+        speed = ispeed;
+        intelligence = iintelligence;
+        isPredator = predator;
+        color = icolor;
+        energyLevel = startEnergy;
+    }
+    
     
     void Animal::eatFood() {
         if (isPredator) {
-            killCooldown = 50;
+            //killCooldown = 50;
             energyLevel += energyToLive;
         } 
         energyLevel += energyToLive;
     }
     
     void Animal::starve() {
-        energyLevel--;
+        if (energyLevel > 0) {
+            energyLevel--;
+        }
+        
     }
     
     bool Animal::moveTo(vec2 newPosition) {
-        srand((unsigned int)time(NULL));
+        //srand((unsigned int)time(NULL));
         float dx = (newPosition.x - position.x);
         float dy = (newPosition.y - position.y);
         //animal on top of food source
@@ -37,10 +50,10 @@ namespace naturalSelection {
             return true;
         }
         //prevents predators from ravenously consuming all prey
-        if (killCooldown > 0) {
-            killCooldown--;
-            return false;
-        }
+//        if (killCooldown > 0) {
+//            killCooldown--;
+//            return false;
+//        }
         //food is out of range of energyLevel
         if ((dx + dy) * (1 + speed/20.0)  > energyLevel) {
             double moveProbability = rand() % 10 + 1;
@@ -78,7 +91,7 @@ namespace naturalSelection {
                 }
             }
             if (isPredator) {
-                energyLevel = energyLevel - (1 + speed/20.0) / 5.0;
+                energyLevel = energyLevel - (1 + speed/20.0) / 4.0;
             } else {
                 energyLevel = energyLevel - (1 + speed/20.0);
             }
@@ -93,10 +106,12 @@ namespace naturalSelection {
     }
     
     bool Animal::canReproduce() {
-        return energyLevel >= energyToReproduce;
+        return energyLevel >= energyToReproduce * 2;
     }
     
     Animal* Animal::reproduce() {
+        //srand((unsigned int)time(NULL));
+        energyLevel-= energyToReproduce;
         int speedOffsetProb = rand() % 10;
         double speedOffset = 0;
         switch (speedOffsetProb) {
@@ -113,7 +128,7 @@ namespace naturalSelection {
         float gOffset = (rand() % 11 - 5) / 100.f;
         ci::Color newColor(color.r, color.g + gOffset, color.b);
         vec2 newPosition(rand() % 100, rand() % 100);
-        Animal *child = new Animal(newPosition, newSpeed, newInt, isPredator, newColor);
+        Animal *child = new Animal(newPosition, newSpeed, newInt, isPredator, newColor, energyToReproduce);
         return child;
         
     }

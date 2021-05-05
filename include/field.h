@@ -13,7 +13,7 @@ namespace naturalSelection {
  */
 class field {
  public:
-  field(const int margin, const int containerSize, const size_t numPlants, const size_t numPixels);
+  field(const int margin, const int containerSize, const size_t numPlants, const size_t numPixels, const size_t dayFrames);
   field() = default;
 
   /**
@@ -41,6 +41,8 @@ class field {
  private:
   void displayPlant(Plant plant) const;
   void displayAnimal(Animal animal) const;
+  size_t framesPerDay;
+  size_t framesLeft;
   size_t numPlantsEachDay; 
   size_t startAnimals = 5;
   size_t pixelsPerSide;

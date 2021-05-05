@@ -25,14 +25,18 @@ class naturalSelectionApp : public ci::app::App {
   const int sectionSize = (windowSize) / 2;
 
  private:
+  bool showHerbivore = true;
   bool running;
   bool byFrame;
   field field_;
   const size_t numFramesPerDay = 300;
   size_t framesPassed = 0;
-  Histogram speed;
-  Histogram population;
-  Histogram intelligence;
+  Histogram herbivoreSpeed;
+  Histogram herbivorePopulation;
+  Histogram herbivoreIntelligence;
+  Histogram predatorSpeed;
+  Histogram predatorPopulation;
+  Histogram predatorIntelligence;
   //const int topRightSectionNum = 2;
   //const int bottomLeftSectionNum = 3;
   //const int bottomRightSectionNum = 4;

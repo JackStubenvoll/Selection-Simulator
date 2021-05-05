@@ -23,7 +23,7 @@ class Histogram {
   void displayGraph() const;
   void displayNumbers() const;
   std::vector<double> datapoints;
-    size_t dayCounter = 0;
+   size_t dayCounter = 0;
  private:
     
   int margin;

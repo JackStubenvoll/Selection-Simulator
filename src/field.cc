@@ -10,7 +10,7 @@ using std::vector;
  * @param margin
  * @param windowSize
  */
-field::field(const int margin, const int containerSize, const size_t numPlants, const size_t numPixels) {
+field::field(const int margin, const int containerSize, const size_t numPlants, const size_t numPixels, const size_t dayFrames) {
   xlowbound = margin;
   ylowbound = margin;
   xhighbound = containerSize - margin;
@@ -18,6 +18,8 @@ field::field(const int margin, const int containerSize, const size_t numPlants, 
   numPlantsEachDay = numPlants;
   pixelsPerSide = numPixels;
   pixelsPerPixel = (xhighbound - xlowbound) / pixelsPerSide;
+  framesPerDay = dayFrames;
+  framesLeft = dayFrames;
 
 }
 
@@ -51,11 +53,11 @@ void field::Display() const {
   for (size_t t = 0; t < predators.size(); t++) {
       displayAnimal(predators[t]);
   }
-  std::string displayString = "Current number of plants: ";
-  displayString+= std::to_string(plants.size()) + "\n";
-  displayString+= "Current number of herbivores: " + std::to_string(herbivores.size());
-  displayString+= "\nCurrent number of predators: " + std::to_string(predators.size());
-  displayString+= "\n Day: " + std::to_string(dayNum);
+  std::string displayString = "Current number of plants: " + std::to_string(plants.size());
+  displayString+= "\nCurrent number of herbivores: " + std::to_string(herbivores.size());
+  displayString+= " | Current number of predators: " + std::to_string(predators.size());
+  displayString+= "\nDay: " + std::to_string(dayNum);
+  displayString+= " | Frames Left: " + std::to_string(framesLeft);
   ci::gl::drawStringCentered(displayString,
                              vec2((xlowbound + xhighbound)/2, 0),
                              ci::Color("white"),
@@ -90,7 +92,13 @@ void field::advanceOneFrame() {
   }
   for (size_t i = 0; i < predators.size(); i++) {
       updatePredatorPosition(predators[i]);
+      double temp = predators[i].energyLevel;
+      if (predators[i].energyLevel <= 0) {
+          predators.erase(predators.begin() + i);
+          i--;
+      }
   }
+  framesLeft--;
 }
 
 void field::advanceDay() {
@@ -100,6 +108,7 @@ void field::advanceDay() {
         generatePlant();
     }
     updateAnimalPopulation();
+    framesLeft = framesPerDay;
 }
 
 void field::generatePlant() {
@@ -119,7 +128,7 @@ void field::generateHerbivore() {
 
 void field::generatePredator() {
     vec2 animalCoords(rand() % 100, rand() % 100);
-    double speed = 2;
+    double speed = 1;
     double intelligence = 4;
     ci::Color startAnimalColor(0.75, 0, 0.5);
     Animal animal(animalCoords, speed, intelligence, true, startAnimalColor);
@@ -131,10 +140,10 @@ void field::updateAnimalPopulation() {
     std::vector<Animal> updatedHerbivoresList;
     for (size_t t = 0; t < herbivores.size(); t++) {
         if (herbivores[t].canReproduce()) {
-            Animal *child1 = herbivores[t].reproduce();
-            Animal *child2 = herbivores[t].reproduce();
-            updatedHerbivoresList.push_back(*child1);
-            updatedHerbivoresList.push_back(*child2);
+            while (herbivores[t].canReproduce()) {
+                Animal *child = herbivores[t].reproduce();
+                updatedHerbivoresList.push_back(*child);
+            }
         } else if (herbivores[t].canLive()) {
             updatedHerbivoresList.push_back(herbivores[t]);
         }
@@ -147,10 +156,14 @@ void field::updateAnimalPopulation() {
     std::vector<Animal> updatedPredatorsList;
     for (size_t t = 0; t < predators.size(); t++) {
         if (predators[t].canReproduce()) {
-            Animal *child1 = predators[t].reproduce();
-            Animal *child2 = predators[t].reproduce();
-            updatedPredatorsList.push_back(*child1);
-            updatedPredatorsList.push_back(*child2);
+            while (predators[t].canReproduce()) {
+                Animal *child = predators[t].reproduce();
+                updatedPredatorsList.push_back(*child);
+            }
+//            Animal *child1 = predators[t].reproduce();
+//            Animal *child2 = predators[t].reproduce();
+//            updatedPredatorsList.push_back(*child1);
+//            updatedPredatorsList.push_back(*child2);
         } else if (predators[t].canLive()) {
             updatedPredatorsList.push_back(predators[t]);
         }
@@ -161,8 +174,9 @@ void field::updateAnimalPopulation() {
     }
     
     if (herbivores.size() == 0) {
-        generateHerbivore();
-        generateHerbivore();
+        for (size_t t = 0 ; t < startAnimals; t++) {
+            generateHerbivore();
+        }
     }
     if (predators.size() == 0) {
         generatePredator();
@@ -172,9 +186,6 @@ void field::updateAnimalPopulation() {
 void field::updateHerbivorePosition(Animal &herbivore) {
   size_t closestPlantIndex = 0;
   if (plants.size() == 0) {
-      for (size_t t = 0; t < herbivores.size(); t++) {
-          herbivores[t].starve();
-      }
       return;
   }
   double shortestDistance = distance(herbivore.position, plants[0].position);
@@ -191,14 +202,21 @@ void field::updateHerbivorePosition(Animal &herbivore) {
       plants.erase(plants.begin() + closestPlantIndex);
   }
   
+  if (herbivore.canReproduce()) {
+      Animal *child = herbivore.reproduce();
+      herbivores.push_back(*child);
+  }
+  
 }
 
 void field::updatePredatorPosition(Animal &predator) {
     size_t closestHerbivoreIndex = 0;
-    if (herbivores.size() == 0) {
+    if (herbivores.size() <= predators.size()) {
+        
         for (size_t t = 0; t < predators.size(); t++) {
             predators[t].starve();
         }
+        
         return;
     }
     double shortestDistance = distance(predator.position, herbivores[0].position);
@@ -214,6 +232,8 @@ void field::updatePredatorPosition(Animal &predator) {
         predator.eatFood();
         herbivores.erase(herbivores.begin() + closestHerbivoreIndex);
     }
+    
+    
 }
     
 double field::distance(vec2 position1, vec2 position2) {

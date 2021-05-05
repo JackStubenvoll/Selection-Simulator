@@ -12,6 +12,7 @@ namespace naturalSelection {
     class Animal {
     public:
         Animal(const vec2 &iposition, const double &ispeed, const double &iintelligence, const bool predator, const ci::Color &icolor);
+        Animal(const vec2 &iposition, const double &ispeed, const double &iintelligence, const bool predator, const ci::Color &icolor, double startEnergy);
         vec2 position;
         double speed;
         double intelligence;
@@ -23,9 +24,10 @@ namespace naturalSelection {
         bool canLive();
         bool canReproduce();
         Animal* reproduce();
+        double energyLevel;
     private:
         double killCooldown = 0;
-        double energyLevel;
+        
         double energyToLive = 20;
         double energyToReproduce = 40;
     };
