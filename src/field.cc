@@ -157,7 +157,7 @@ void field::updateAnimalPopulation() {
     }
     predators.clear();
     for (size_t t = 0; t < updatedHerbivoresList.size(); t++) {
-        predators.push_back(updatedHerbivoresList[t]);
+        predators.push_back(updatedPredatorsList[t]);
     }
     
     if (herbivores.size() == 0) {
