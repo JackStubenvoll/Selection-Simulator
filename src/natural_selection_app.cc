@@ -122,6 +122,9 @@ void naturalSelectionApp::keyDown(ci::app::KeyEvent event) {
     case ci::app::KeyEvent::KEY_KP0:
       showHerbivore = !showHerbivore;
       break;
+    case ci::app::KeyEvent::KEY_0:
+      showHerbivore = !showHerbivore;
+      break;
   }
 
 }
