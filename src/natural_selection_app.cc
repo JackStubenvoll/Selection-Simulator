@@ -150,7 +150,7 @@ double naturalSelectionApp::animalValueAverage(vector<Animal> animals, size_t va
             break;
     }
     if (animals.size() == 0) {
-        return -1.0;
+        return 0.0;
     } else {
         return sum / ((double) animals.size());
     }

@@ -18,18 +18,30 @@ namespace naturalSelection {
     
     void Animal::eatFood() {
         if (isPredator) {
+            killCooldown = 50;
             energyLevel += energyToLive;
         } 
         energyLevel += energyToLive;
+    }
+    
+    void Animal::starve() {
+        energyLevel--;
     }
     
     bool Animal::moveTo(vec2 newPosition) {
         srand((unsigned int)time(NULL));
         float dx = (newPosition.x - position.x);
         float dy = (newPosition.y - position.y);
+        //animal on top of food source
         if (dx == 0 && dy == 0) {
             return true;
         }
+        //prevents predators from ravenously consuming all prey
+        if (killCooldown > 0) {
+            killCooldown--;
+            return false;
+        }
+        //food is out of range of energyLevel
         if ((dx + dy) * (1 + speed/20.0)  > energyLevel) {
             double moveProbability = rand() % 10 + 1;
             if (moveProbability > intelligence) {
@@ -65,7 +77,12 @@ namespace naturalSelection {
                     position.y--;
                 }
             }
-            energyLevel = energyLevel - (1 + speed/20.0);
+            if (isPredator) {
+                energyLevel = energyLevel - (1 + speed/20.0) / 5.0;
+            } else {
+                energyLevel = energyLevel - (1 + speed/20.0);
+            }
+            
             tileMoveCounter= tileMoveCounter - 1;
         }
         return false;

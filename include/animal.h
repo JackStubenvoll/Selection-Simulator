@@ -18,11 +18,13 @@ namespace naturalSelection {
         bool isPredator = false;
         ci::Color color;
         void eatFood();
+        void starve();
         bool moveTo(vec2 newPosition);
         bool canLive();
         bool canReproduce();
         Animal* reproduce();
     private:
+        double killCooldown = 0;
         double energyLevel;
         double energyToLive = 20;
         double energyToReproduce = 40;

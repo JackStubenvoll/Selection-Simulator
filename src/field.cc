@@ -156,7 +156,7 @@ void field::updateAnimalPopulation() {
         }
     }
     predators.clear();
-    for (size_t t = 0; t < updatedHerbivoresList.size(); t++) {
+    for (size_t t = 0; t < updatedPredatorsList.size(); t++) {
         predators.push_back(updatedPredatorsList[t]);
     }
     
@@ -172,6 +172,9 @@ void field::updateAnimalPopulation() {
 void field::updateHerbivorePosition(Animal &herbivore) {
   size_t closestPlantIndex = 0;
   if (plants.size() == 0) {
+      for (size_t t = 0; t < herbivores.size(); t++) {
+          herbivores[t].starve();
+      }
       return;
   }
   double shortestDistance = distance(herbivore.position, plants[0].position);
@@ -193,6 +196,9 @@ void field::updateHerbivorePosition(Animal &herbivore) {
 void field::updatePredatorPosition(Animal &predator) {
     size_t closestHerbivoreIndex = 0;
     if (herbivores.size() == 0) {
+        for (size_t t = 0; t < predators.size(); t++) {
+            predators[t].starve();
+        }
         return;
     }
     double shortestDistance = distance(predator.position, herbivores[0].position);
